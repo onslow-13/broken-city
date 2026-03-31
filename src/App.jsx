@@ -496,7 +496,7 @@ function Game({ player }) {
 // GROK EXPANSION GUIDE:
 // Search for [GROK: ...] comments throughout this SCENES object.
 // Each one is a prose string (inside backticks) that you should expand IN PLACE.
-//const SCENES = {
+const SCENES = {
   prologue_1: {
     beats: [
       {
