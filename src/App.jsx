@@ -394,7 +394,7 @@ const SCENES = {
 You don’t remember answering it. You remember the bourbon burning down your throat, the cheap television glow flickering across your bare chest and the half-empty bottle on the table. Your cock is still half-hard from the half-hearted stroke session that went nowhere. Then the phone is in your hand and a woman’s voice slices through the stale air—clipped, controlled, the kind of tight control that means she’s barely holding her shit together.
       {
         type: "prose",
-        text: (p) => `"Is this ${p.name}?" A pause. "The investigator."`,
+      text: (p) => `"Is this ${p.name}?" A pause. "The investigator."`,
       },
       {
         type: "prose",
