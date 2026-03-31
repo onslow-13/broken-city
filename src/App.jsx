@@ -73,7 +73,6 @@ function CharCreate({ onStart }) {
   const [step, setStep] = useState(0);
   const [player, setPlayer] = useState({ name: "", background: "", style: "" });
   const [input, setInput] = useState("");
-
   const steps = [
     { prompt: "The city doesn't care who you are. But the record needs a name.\n\nWhat do they call you?", field: "name", type: "text", placeholder: "Enter your name..." },
     {
@@ -97,7 +96,6 @@ function CharCreate({ onStart }) {
       ],
     },
   ];
-
   const current = steps[step];
   const bgLabels = { ranger: "Army Ranger", cop: "Former NYPD", intel: "MI Operative", recon: "Force Recon" };
   const styleLabels = { methodical: "Methodical", instinct: "Gut Instinct", social: "People Reader", aggressive: "Pressure Player" };
@@ -177,6 +175,9 @@ function Game({ player }) {
   const [showEvidence, setShowEvidence] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [nextBeatIdx, setNextBeatIdx] = useState(0);
+  const [currentSceneId, setCurrentSceneId] = useState("prologue_1");
+  const [afterOutcomeFn, setAfterOutcomeFn] = useState(null);
+
   const bottomRef = useRef(null);
   const notifId = useRef(0);
 
@@ -184,8 +185,11 @@ function Game({ player }) {
     const id = notifId.current++;
     setNotifs(n => [...n, { id, type, text }]);
   }
+
   function removeNotif(id) { setNotifs(n => n.filter(x => x.id !== id)); }
+
   function addClue(clue) { setClues(c => [...c, clue]); addNotif("clue", `Evidence: ${clue.label}`); }
+
   function applyStatDelta(sd) {
     if (!sd) return;
     if (sd.stats) setStats(s => applyDelta(s, sd.stats));
@@ -195,6 +199,7 @@ function Game({ player }) {
   }
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [beats, outcome, pendingChoices]);
+
   useEffect(() => { startScene(sceneId); }, [sceneId]);
 
   function startScene(id) {
@@ -205,12 +210,14 @@ function Game({ player }) {
     setOutcome(null);
     setWaitingContinue(false);
     setNextBeatIdx(0);
+    setCurrentSceneId(id);
     advanceBeats(scene.beats, 0, id);
   }
 
   function advanceBeats(sceneBs, idx, sid) {
     if (!sceneBs || idx >= sceneBs.length) return;
     const beat = sceneBs[idx];
+
     if (beat.type === "prose") {
       setBeats(b => [...b, { type: "prose", text: beat.text(player, flags, clues, stats, rels) }]);
       advanceBeats(sceneBs, idx + 1, sid);
@@ -218,11 +225,11 @@ function Game({ player }) {
       setBeats(b => [...b, { type: "prose", text: beat.text(player, flags, clues, stats, rels) }]);
       setWaitingContinue(true);
       setNextBeatIdx(idx + 1);
-      window._currentScene = sid;
+      setCurrentSceneId(sid);
     } else if (beat.type === "examine") {
       setBeats(b => [...b, { type: "examine", items: beat.items, prompt: beat.prompt }]);
       setNextBeatIdx(idx + 1);
-      window._currentScene = sid;
+      setCurrentSceneId(sid);
     } else if (beat.type === "choice") {
       setPendingChoices({ choices: beat.choices, sceneBs, idx, sid });
     }
@@ -230,24 +237,31 @@ function Game({ player }) {
 
   function handleContinue() {
     setWaitingContinue(false);
-    const scene = SCENES[window._currentScene];
-    if (scene) advanceBeats(scene.beats, nextBeatIdx, window._currentScene);
+    const scene = SCENES[currentSceneId];
+    if (scene) advanceBeats(scene.beats, nextBeatIdx, currentSceneId);
   }
 
   function handleChoice(choice) {
     if (!pendingChoices) return;
     const { sceneBs, idx, sid } = pendingChoices;
     setPendingChoices(null);
+
     if (choice.delta) applyStatDelta(choice.delta);
+
     if (choice.outcome) {
       setOutcome(choice.outcome(player, flags, clues, stats, rels));
       setWaitingContinue(true);
-      window._afterOutcome = () => {
+
+      setAfterOutcomeFn(() => () => {
         setOutcome(null);
-        if (choice.nextScene) { setSceneId(choice.nextScene); return; }
+        if (choice.nextScene) {
+          setSceneId(choice.nextScene);
+          return;
+        }
         advanceBeats(sceneBs, idx + 1, sid);
-      };
-      window._currentScene = "__outcome__";
+      });
+
+      setCurrentSceneId("__outcome__");
     } else if (choice.nextScene) {
       setSceneId(choice.nextScene);
     } else {
@@ -257,8 +271,13 @@ function Game({ player }) {
 
   function handleContinueOutcome() {
     setWaitingContinue(false);
-    if (window._afterOutcome) { const fn = window._afterOutcome; window._afterOutcome = null; fn(); }
-    else handleContinue();
+    if (afterOutcomeFn) {
+      const fn = afterOutcomeFn;
+      setAfterOutcomeFn(null);
+      fn();
+    } else {
+      handleContinue();
+    }
   }
 
   return (
@@ -267,7 +286,9 @@ function Game({ player }) {
       <div style={{ position: "fixed", top: 20, right: 20, zIndex: 999, display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
         {notifs.map(n => <Notif key={n.id} n={n} onClose={() => removeNotif(n.id)} />)}
       </div>
+
       {showEvidence && <EvidencePanel clues={clues} onClose={() => setShowEvidence(false)} />}
+
       {showStats && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.9)", zIndex: 900, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => setShowStats(false)}>
           <div onClick={e => e.stopPropagation()} style={{ width: 300, background: "#0a0a0b", border: `1px solid #1e1e20`, borderTop: `2px solid ${AMBER}`, padding: 24 }}>
@@ -285,6 +306,7 @@ function Game({ player }) {
           </div>
         </div>
       )}
+
       <div style={{ position: "sticky", top: 0, zIndex: 100, background: "#0a0a0b", borderBottom: "1px solid #0f0f10", padding: "12px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 16, letterSpacing: 3, color: AMBER, fontWeight: 700 }}>BROKEN CITY</div>
         <div style={{ display: "flex", gap: 16 }}>
@@ -292,6 +314,7 @@ function Game({ player }) {
           <button onClick={() => setShowStats(true)} style={{ fontSize: 8, letterSpacing: 2, color: "#333", background: "none", border: "none", cursor: "pointer" }}>DOSSIER</button>
         </div>
       </div>
+
       <div style={{ flex: 1, padding: "32px 24px 120px", maxWidth: 600, margin: "0 auto", width: "100%" }}>
         {beats.map((beat, i) => {
           if (beat.type === "prose") return (
@@ -309,8 +332,8 @@ function Game({ player }) {
                     setBeats(b => b.map((x, xi) => xi === i ? { ...x, items: x.items.filter((_, ji) => ji !== j) } : x));
                     if (beat.items.length <= 1) {
                       setBeats(b => b.filter((_, xi) => xi !== i));
-                      const scene = SCENES[window._currentScene];
-                      if (scene) advanceBeats(scene.beats, nextBeatIdx, window._currentScene);
+                      const scene = SCENES[currentSceneId];
+                      if (scene) advanceBeats(scene.beats, nextBeatIdx, currentSceneId);
                     }
                   }}
                     onMouseEnter={e => { e.currentTarget.style.borderColor = AMBER; e.currentTarget.style.background = "#0d0d0e"; }}
@@ -323,8 +346,8 @@ function Game({ player }) {
                 {beat.items.length === 0 && (
                   <button onClick={() => {
                     setBeats(b => b.filter((_, xi) => xi !== i));
-                    const scene = SCENES[window._currentScene];
-                    if (scene) advanceBeats(scene.beats, nextBeatIdx, window._currentScene);
+                    const scene = SCENES[currentSceneId];
+                    if (scene) advanceBeats(scene.beats, nextBeatIdx, currentSceneId);
                   }} style={{ fontSize: 8, letterSpacing: 3, color: "#444", background: "none", border: "none", cursor: "pointer", padding: "8px 0", textAlign: "left" }}>
                     DONE EXAMINING →
                   </button>
@@ -334,10 +357,12 @@ function Game({ player }) {
           );
           return null;
         })}
+
         {outcome && (
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 15, lineHeight: 1.9, color: "#888", marginBottom: 22, fontStyle: "italic", borderLeft: `2px solid ${AMBER}`, paddingLeft: 16, animation: "fadeUp .4s ease" }}
             dangerouslySetInnerHTML={{ __html: outcome.replace(/\*([^*]+)\*/g, "<em>$1</em>") }} />
         )}
+
         {waitingContinue && (
           <div style={{ animation: "fadeUp .4s ease", marginBottom: 24 }}>
             <button onClick={outcome ? handleContinueOutcome : handleContinue}
@@ -348,6 +373,7 @@ function Game({ player }) {
             </button>
           </div>
         )}
+
         {pendingChoices && (
           <div style={{ animation: "fadeUp .4s ease", marginTop: 8, marginBottom: 24 }}>
             <div style={{ fontSize: 7, letterSpacing: 4, color: "#2a2a2e", marginBottom: 16, fontFamily: "'IBM Plex Mono', monospace" }}>WHAT DO YOU DO?</div>
@@ -375,12 +401,6 @@ function Game({ player }) {
 }
 
 // ─── SCENES ───────────────────────────────────────────────────────────────
-// HOW TO USE GROK PLACEHOLDERS:
-// Search for "GROK_PLACEHOLDER" in this file.
-// Each one is a backtick string you paste Grok's prose into.
-// Only replace what's between the backticks on that line.
-// Do NOT touch anything else.
-
 const SCENES = {
   prologue_1: {
     beats: [
@@ -391,15 +411,16 @@ const SCENES = {
       {
         type: "prose",
         text: (p) => `The call comes in at 2:17 AM.
-You don’t remember answering it. You remember the bourbon burning down your throat, the cheap television glow flickering across your bare chest and the half-empty bottle on the table. Your cock is still half-hard from the half-hearted stroke session that went nowhere. Then the phone is in your hand and a woman’s voice slices through the stale air—clipped, controlled, the kind of tight control that means she’s barely holding her shit together.
+You don’t remember answering it. You remember the bourbon burning down your throat, the cheap television glow flickering across your bare chest and the half-empty bottle on the table. Your cock is still half-hard from the half-hearted stroke session that went nowhere. Then the phone is in your hand and a woman’s voice slices through the stale air—clipped, controlled, the kind of tight control that means she’s barely holding her shit together.`,
+      },
       {
         type: "prose",
-      text: (p) => `"Is this ${p.name}?" A pause. "The investigator."`,
+        text: (p) => `"Is this ${p.name}?" A pause. "The investigator."`,
       },
       {
         type: "prose",
         text: (p) => `You say yes before you even think about it.
-“My name is Vivienne Cole. I worked for Councilman Dutton.” A sharp inhale. “He’s dead. The police are calling it suicide. I don’t believe that for a second. I need someone who doesn’t suck the city’s dick… someone who still knows how to dig when the truth is ugly and bloody.”
+“My name is Vivienne Cole. I worked for Councilman Dutton.” A sharp inhale. “He’s dead. The police are calling it suicide. I don’t believe that for a second. I need someone who doesn’t suck the city’s dick… someone who still knows how to dig when the truth is ugly and bloody.”`,
       },
       {
         type: "pause",
@@ -416,7 +437,7 @@ Without a word he shifts just enough to let you pass. “You didn’t hear it fr
       },
       {
         type: "pause",
-        text: () => `he house reeks of old money, stale cigarette smoke, and the coppery tang of fresh blood.
+        text: () => `The house reeks of old money, stale cigarette smoke, and the coppery tang of fresh blood.
 Upstairs, the study door creaks open. Councilman Marcus Dutton is slumped in his leather chair, brains and blood sprayed across the expensive oak desk and the wall behind him. The gunshot wound is a ragged, wet hole in his right temple. The gun lies near his right hand like it was placed there by someone who didn’t know he was left-handed. His eyes are still open, glassy and surprised. The staging is too clean. Too perfect. Someone wanted this closed fast and dirty.`,
       },
       {
@@ -447,12 +468,12 @@ Upstairs, the study door creaks open. Councilman Marcus Dutton is slumped in his
       },
       {
         type: "pause",
-       text: (p, flags, clues) => {
-  const found = clues.length;
-  if (found >= 3) return `You've seen enough. Maybe too much. The room is screaming a story that doesn't match the official lie.\n\nVivienne Cole waits at the foot of the stairs—tall, dark coat hugging every curve, rain still clinging to her dark hair. She watches you descend with hungry, calculating eyes, like she's already imagining what you'll do to the people who did this.`;
-  if (found >= 1) return `You've seen enough for now.\n\nVivienne Cole stands at the foot of the stairs—tall, composed, dark coat clinging to her body. She tracks every step you take, her gaze heavy with something raw between desperation and raw want.`;
-  return `You've done a first pass.\n\nVivienne Cole is waiting at the bottom of the stairs—tall, controlled, eyes locked on you like she’s measuring exactly how dangerous you could be between her thighs or in her corner.`;
-},
+        text: (p, flags, clues) => {
+          const found = clues.length;
+          if (found >= 3) return `You've seen enough. Maybe too much. The room is screaming a story that doesn't match the official lie.\n\nVivienne Cole waits at the foot of the stairs—tall, dark coat hugging every curve, rain still clinging to her dark hair. She watches you descend with hungry, calculating eyes, like she's already imagining what you'll do to the people who did this.`;
+          if (found >= 1) return `You've seen enough for now.\n\nVivienne Cole stands at the foot of the stairs—tall, composed, dark coat clinging to her body. She tracks every step you take, her gaze heavy with something raw between desperation and raw want.`;
+          return `You've done a first pass.\n\nVivienne Cole is waiting at the bottom of the stairs—tall, controlled, eyes locked on you like she’s measuring exactly how dangerous you could be between her thighs or in her corner.`;
+        },
       },
       {
         type: "prose",
@@ -466,53 +487,33 @@ You step close enough that you can smell rain on her coat mixed with warm skin a
             text: "Tell her everything. See how she reacts.",
             sub: "Information is leverage. But sharing it first means giving it away.",
             outcome: (p, flags, clues) => clues.some(c => c.id === "ashtray") || clues.some(c => c.id === "glass_position")
-  ? `// GROK_PLACEHOLDER_08 — ROMANCE/VIVIENNE: her reaction to what you share. What her face does. Keep the clue conditional — two different responses based on whether ashtray/glass clues were found.
-outcome: (p, flags, clues) => clues.some(c => c.id === "ashtray") || clues.some(c => c.id === "glass_position")
-  ? `The moment the words leave her mouth the tension snaps.
-
+              ? `The moment the words leave her mouth the tension snaps.
 You grab her by the coat and shove her back against the wall hard enough that a picture frame rattles. Vivienne gasps, but her hands are already fisting your shirt, pulling you in instead of pushing away.
-
 “Fuck you for making me wait,” she growls, voice raw.
-
 You rip her coat open, buttons scattering across the hardwood. Her blouse is next — you yank it down, exposing full, heavy tits with dark, stiff nipples. She moans when you pinch one hard, arching into your hand. Your other hand shoves up her skirt, finding her cunt already soaked through her panties. You rip them aside and slide two thick fingers straight into her tight, dripping hole.
-
 “Jesus—fuck—” she hisses, hips bucking against your hand.
-
 You finger-fuck her rough and deep while your mouth attacks her neck, biting hard enough to leave marks. Her walls clench around your fingers like she’s starving for it. She’s loud, unashamed, grinding down on your hand while rain beats against the windows and a dead man lies one floor above.
-
 You pull your fingers out, slick with her juices, and shove them into her mouth. She sucks them clean, eyes wild.
-
 “On your knees,” you order.
-
 She drops instantly, fingers tearing at your belt. The second your cock springs free — thick, heavy, already leaking — she takes you deep into her throat with a wet gag. No teasing. She fucks her own face on your dick, saliva dripping down her chin onto her tits while she looks up at you with pure filthy need.
-
 You grab her hair and thrust harder, fucking her mouth until her mascara runs. When you finally pull out she’s gasping, strings of spit connecting her lips to your glistening cock.
-
 “Fuck me,” she demands, voice wrecked. “Right here. Make it hurt.”
-
 You spin her around, bend her over the newel post, and slam into her cunt in one brutal thrust. She cries out — half pain, half pleasure — as you bury yourself balls-deep. Her pussy is scorching hot and soaking wet, gripping you like a vice.
-
 You fuck her hard and fast, the sound of skin slapping skin echoing through the dead man’s house. One hand wraps in her hair, the other slaps her ass hard enough to leave red handprints. Every thrust forces a broken moan out of her.
-
 “Harder—fuck—don’t stop—” she gasps, pushing back onto your cock like she wants to be ruined.
-
 You feel her start to come first — her cunt fluttering and squeezing around you. You don’t slow down. You pound her through it until her legs shake and she’s almost sobbing with pleasure.
-
 Only then do you let go, burying yourself to the hilt and flooding her pussy with thick, hot cum. You keep thrusting through your orgasm, pushing your load deeper while she milks every drop.
-
 When you finally pull out, cum drips down her thighs onto the floor. Vivienne stays bent over, breathing hard, a dark, satisfied smile on her wrecked face.
-
 “We’re not done,” she says hoarsely. “Not even close.”`
-  : `She listens with her arms crossed tight, pushing her breasts up against the coat. Something shifts in her posture when you describe the study—her thighs pressing together just slightly, a soft sound escaping her throat. “You believe me,” she whispers, voice thick with need.\n\n“I believe the room,” you reply, eyes dropping to her mouth for a beat too long. “Who had access to this house?”`,
-delta: { rels: { vivienne: 15 }, stats: { instinct: 6, resolve: -2 } },
-            delta: { rels: { vivienne: 8 }, stats: { empathy: 3 } },
+              : `She listens with her arms crossed tight, pushing her breasts up against the coat. Something shifts in her posture when you describe the study—her thighs pressing together just slightly, a soft sound escaping her throat. “You believe me,” she whispers, voice thick with need.\n\n“I believe the room,” you reply, eyes dropping to her mouth for a beat too long. “Who had access to this house?”`,
+            delta: { rels: { vivienne: 15 }, stats: { instinct: 6, resolve: -2 } },
           },
           {
             text: "Ask her where she was tonight before answering anything.",
             sub: "She hired you. That doesn't make her clean.",
             outcome: () => `She doesn’t flinch. Doesn’t look away. Her eyes stay locked on yours, steady and challenging.
 “Here. Until around eleven. Then he asked me to leave.” She pauses, tongue touching her lower lip. “Which he’d never done before. Fourteen months, and the bastard had never sent me home early.”
-You watch the way her pulse jumps in her throat. That’s either the truth or the best goddamn lie you’ve heard in years. Part of you wants to push her against the wall and find out which it is with your hands."`,
+You watch the way her pulse jumps in her throat. That’s either the truth or the best goddamn lie you’ve heard in years. Part of you wants to push her against the wall and find out which it is with your hands.`,
             delta: { stats: { instinct: 4, authority: 3 }, rels: { vivienne: 3 } },
           },
           {
@@ -527,7 +528,7 @@ You watch the way her pulse jumps in her throat. That’s either the truth or th
             requiresClue: "window",
             outcome: () => `You describe the scratched window latch. Vivienne goes completely still, her full lips parting in surprise. For a moment the polished mask shatters and you see raw fear—and something hotter—flash across her face.
 “He had a locksmith re-key the whole house six weeks ago,” she breathes, voice low and shaky. “He wouldn’t tell me why. I asked twice.”
-Her chest rises faster now. Whatever Marcus Dutton was afraid of, it started six weeks ago—and it’s making her nipples tighten against the fabric of her blouse."`,
+Her chest rises faster now. Whatever Marcus Dutton was afraid of, it started six weeks ago—and it’s making her nipples tighten against the fabric of her blouse.`,
             delta: { stats: { instinct: 6, resolve: 3 }, rels: { vivienne: 10 } },
           },
         ],
@@ -552,7 +553,7 @@ You walk alone through the empty streets at 3 AM, every shadow feeling like eyes
             text: "Go back to your apartment. Map out what you have before you move.",
             sub: "Slow and careful. Don't step on your own evidence.",
             outcome: () => `Back in your apartment at 4 AM the case map covers your wall—red string, names, gaps that feel like open wounds. Dutton. Voss. Vivienne’s dark eyes and tighter curves. The cigarettes. The window. The drawer.
-You jerk off once in the shower just to take the edge off the adrenaline and frustration, then fall asleep in the chair. When you wake at seven the plan is razor sharp and your cock is hard again from the dreams.`,
+You collapse into the chair and sleep like the dead. When you wake at seven the plan is razor sharp.`,
             delta: { stats: { instinct: 5, resolve: 4 } },
             nextScene: "chapter2_intro",
           },
@@ -575,42 +576,26 @@ You pull back the sheet. Dutton’s body is pale and stiff, the ragged exit woun
           {
             text: "Call Vivienne back. Push now, before she builds the wall higher.",
             sub: "Information gaps close fast when people lawyer up.",
-            // GROK_PLACEHOLDER_14 — ROMANCE/VIVIENNE: late night call, 4AM. Her voice is different — less armor. She says more than she means to. Protagonist aware this is getting too close. 4 paragraphs.
-            outcome: () => `// GROK_PLACEHOLDER_14 — ROMANCE/VIVIENNE: late night call, 4AM. Her voice is different — less armor. She says more than she means to. Protagonist aware this is getting too close. 4 paragraphs.
-outcome: () => `The second you step into her apartment the door barely clicks shut before she’s on you.
-
+            outcome: () => `The second you step into her apartment the door barely clicks shut before she’s on you.
 Vivienne pushes you against the wall, kissing you like she’s trying to devour you — all teeth and tongue and desperation. Her hands are already undoing your belt while yours rip her blouse open. You shove her bra down and take one hard nipple into your mouth, sucking and biting until she moans loud enough to wake the neighbors.
-
 She drops to her knees right there in the hallway, yanks your pants down, and swallows your cock in one greedy motion. The wet heat of her throat is obscene. She gags herself on you, spit running down her chin onto her tits as she bobs fast and sloppy, eyes watering but never breaking eye contact.
-
 You fist her hair and fuck her face until her mascara streaks black down her cheeks. When you finally pull her off, she’s gasping, lips swollen and shiny.
-
 “Bedroom,” she pants. “Now.”
-
 You don’t make it that far.
-
 You bend her over the back of the couch, flip her skirt up, and slam into her dripping cunt from behind. She’s soaked — obscenely wet — and the first thrust makes her scream into the cushions. You fuck her deep and brutal, hips snapping against her ass, one hand gripping her hip hard enough to bruise while the other reaches around to rub her swollen clit.
-
 “Harder,” she begs, voice breaking. “Fuck me like you hate me.”
-
 You give her exactly what she wants — pounding her so hard the couch scrapes across the floor. Her pussy clenches and flutters around your cock as she comes violently, squirting down her thighs and soaking your balls.
-
 You don’t stop. You flip her onto her back on the couch, throw her legs over your shoulders, and drive back in even deeper. The new angle makes her eyes roll back. You choke her lightly while you rail her, watching her face twist in pleasure-pain.
-
 When you finally come you bury yourself to the root and pump rope after thick rope of cum straight into her spasming cunt. She milks you dry, trembling underneath you, whispering filthy praise against your neck.
-
 For a long moment the only sound is both of you breathing hard, sweat-slick and spent.
-
 Vivienne laughs softly, voice hoarse. “I knew you’d fuck like that.”`,
-delta: { rels: { vivienne: 18 }, stats: { instinct: 8, empathy: -3 } },"`,
-            delta: { stats: { empathy: 4, instinct: 5 }, rels: { vivienne: 8 } },
+            delta: { rels: { vivienne: 18 }, stats: { instinct: 8, empathy: -3 } },
             nextScene: "chapter2_intro",
           },
         ],
       },
     ],
   },
-
   chapter2_intro: {
     beats: [
       {
@@ -640,28 +625,24 @@ delta: { rels: { vivienne: 18 }, stats: { instinct: 8, empathy: -3 } },"`,
           {
             text: "This needs to go somewhere safe before it gets you both killed.",
             sub: "The document is everything. Protecting it is protecting her.",
-            // GROK_PLACEHOLDER_18 — ROMANCE/VIVIENNE: the hour making copies together. Proximity. She watches protagonist work, something shifts. A moment where she almost says something and doesn't. 4 paragraphs.
             outcome: () => `You spend the next hour making copies — lawyer, anonymous drop, old alias safety box.\n\nVivienne stays close the whole time, her body brushing yours more than necessary. You can feel the heat coming off her. At one point she leans in so close you feel her breath on your neck and almost says something before she catches herself.\n\n"Now," you say finally. "Tell me what Dutton was afraid of. All of it."`,
             delta: { stats: { resolve: 6, authority: 4 }, rels: { vivienne: 6 } },
           },
           {
             text: "Take it straight to Crane. This is bigger than a PI case now.",
             sub: "You trust him. Mostly.",
-            // GROK_PLACEHOLDER_19 — VIOLENCE/ATMOSPHERE: parking structure with Crane. Dark, exposed, dangerous. Crane is scared and that's worse than anything. 4 paragraphs.
             outcome: () => `Crane meets you in the dark parking structure. Concrete and shadows, the kind of place where bad decisions get made permanent.\n\nHe reads the paper, face going tight and angry. "This leaks, Voss will have both our heads by morning. He owns half this city."\n\nYou step closer. "I'm asking if you still give a damn that a man had his brains blown out."\n\nCrane stares into the dark for a long time, then pockets the paper. "Forty-eight hours. After that we're both probably dead."`,
             delta: { stats: { authority: 5, instinct: 3 }, rels: { crane: 12, voss: -5 } },
           },
           {
             text: "Get to Herongate Holdings before Voss realizes the document exists.",
             sub: "Follow the money. It goes somewhere physical.",
-            // GROK_PLACEHOLDER_20 — VIOLENCE/ATMOSPHERE: tracking Herongate to a physical location. Something wrong about the building. Protagonist is being watched and doesn't know it yet. End on dread. 4 paragraphs.
             outcome: () => `The shell company leads to a quiet building on Merchant Row. The registered agent is tied to a construction firm that pocketed forty million in dirty city contracts.\n\nYou stand across the street in the rain watching the dark windows. The place feels wrong — too still, too watchful. You can feel eyes on you even though the street looks empty.\n\nThe paranoia crawls up your spine and settles heavy. You're building the picture. It's an ugly one.`,
             delta: { stats: { instinct: 7, resolve: 5 }, rels: { ghost: 8 } },
           },
           {
             text: "Ask Vivienne who else Dutton trusted. Someone gave him that list.",
             sub: "No one builds a file like this alone.",
-            // GROK_PLACEHOLDER_21 — ROMANCE/VIVIENNE: she gives up the Ghost detail. Something intimate about the admission — things Dutton never told her. Protagonist promises to find Ghost. She doesn't say thank you. She doesn't have to. 4 paragraphs.
             outcome: () => `She stares into her coffee for a long time, then speaks low.\n\n"There was someone he called late at night. He called them Ghost." Her voice drops. "I thought it was code. He never told me details, but sometimes after those calls he'd look at me like he wanted to confess everything."\n\nYou nod slowly. "Then I'll find Ghost."\n\nShe doesn't say thank you. She doesn't have to.`,
             delta: { stats: { empathy: 5, instinct: 6 }, rels: { vivienne: 8, ghost: 10 } },
           },
