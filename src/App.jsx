@@ -390,19 +390,20 @@ const SCENES = {
       },
       {
         type: "prose",
-        text: (p) => `The call comes in at 2:17 AM.\n\nYou don't remember answering it. You remember the bourbon burning down your throat, the cheap television glow flickering across your bare chest and the half-empty bottle on the table. Then the phone is in your hand and a woman's voice slices through the stale air — clipped, controlled, the kind of tight control that means she's barely holding her shit together.`,
-      },
+        text: (p) => `The call comes in at 2:17 AM.
+You don’t remember answering it. You remember the bourbon burning down your throat, the cheap television glow flickering across your bare chest and the half-empty bottle on the table. Your cock is still half-hard from the half-hearted stroke session that went nowhere. Then the phone is in your hand and a woman’s voice slices through the stale air—clipped, controlled, the kind of tight control that means she’s barely holding her shit together.
       {
         type: "prose",
         text: (p) => `"Is this ${p.name}?" A pause. "The investigator."`,
       },
       {
         type: "prose",
-        text: (p) => `You say yes before you even think about it.\n\n"My name is Vivienne Cole. I *worked* for Councilman Dutton." A sharp inhale. "He's dead. The police are calling it suicide. I don't believe that for a second. I need someone who doesn't work for the city — someone who still knows how to dig when the truth is ugly and bloody."`,
+        text: (p) => `You say yes before you even think about it.
+“My name is Vivienne Cole. I worked for Councilman Dutton.” A sharp inhale. “He’s dead. The police are calling it suicide. I don’t believe that for a second. I need someone who doesn’t suck the city’s dick… someone who still knows how to dig when the truth is ugly and bloody.”
       },
       {
         type: "pause",
-        text: () => `An hour later you're standing in the cold rain outside Dutton's townhouse on Aldrich Street. The yellow police tape snaps and flutters like it's trying to escape. Two uniforms huddle by the cruiser, bored and wet. Detective Ray Crane stands near the door — tall, weathered, face like worn leather, arms crossed over a chest that's seen too many bodies. His eyes lock on you immediately, tired and hard.`,
+        text: () => `An hour later you’re standing in the cold rain outside Dutton’s townhouse on Aldrich Street. The yellow police tape snaps and flutters like it’s trying to escape. Two uniforms huddle by the cruiser, bored and wet. Detective Ray Crane stands near the door—tall, weathered, face like worn leather, arms crossed over a chest that’s seen too many bodies. His eyes lock on you immediately, tired and hard.`,
       },
       {
         type: "prose",
@@ -410,11 +411,13 @@ const SCENES = {
       },
       {
         type: "prose",
-        text: () => `He stares at you for a long beat. Crane knew you back when you both still gave a damn about the badge. He knows exactly what kind of man you became after you walked away.\n\nWithout a word he shifts just enough to let you pass. "You didn't hear it from me," he growls low. "ME's calling it self-inflicted. Gunshot, study upstairs. Nobody in the house." His jaw tightens. "Nobody *claims* to have been in the house."`,
+        text: () => `He stares at you for a long beat. Crane knew you back when you both still gave a fuck about the badge. He knows exactly what kind of man you became after you walked away.
+Without a word he shifts just enough to let you pass. “You didn’t hear it from me,” he growls low. “ME’s calling it self-inflicted. Gunshot, study upstairs. Nobody in the house.” His jaw tightens. “Nobody claims to have been in the fucking house."`,
       },
       {
         type: "pause",
-        text: () => `The house reeks of old money, stale cigarette smoke, and the coppery tang of fresh blood.\n\nUpstairs, the study door creaks open. Councilman Marcus Dutton is slumped in his leather chair, brains and blood sprayed across the expensive oak desk and the wall behind him. The gunshot wound is a ragged, wet hole in his right temple. The gun lies near his right hand like it was placed there by someone who didn't know he was left-handed. His eyes are still open, glassy and surprised.\n\nThe staging is too clean. Too perfect. Someone wanted this closed fast and dirty.`,
+        text: () => `he house reeks of old money, stale cigarette smoke, and the coppery tang of fresh blood.
+Upstairs, the study door creaks open. Councilman Marcus Dutton is slumped in his leather chair, brains and blood sprayed across the expensive oak desk and the wall behind him. The gunshot wound is a ragged, wet hole in his right temple. The gun lies near his right hand like it was placed there by someone who didn’t know he was left-handed. His eyes are still open, glassy and surprised. The staging is too clean. Too perfect. Someone wanted this closed fast and dirty.`,
       },
       {
         type: "examine",
@@ -444,16 +447,17 @@ const SCENES = {
       },
       {
         type: "pause",
-        text: (p, flags, clues) => {
-          const found = clues.length;
-          if (found >= 3) return `You've seen enough. Maybe too much. The room is screaming a story that doesn't match the official lie.\n\nVivienne Cole waits at the foot of the stairs — tall, dark coat, rain still clinging to her hair. She watches you descend with hungry, calculating eyes, like she's already imagining what you'll do to the people who did this.`;
-          if (found >= 1) return `You've seen enough for now.\n\nVivienne Cole stands at the foot of the stairs — tall, composed, dark coat. She tracks every step you take, her gaze heavy with something raw between desperation and want.`;
-          return `You've done a first pass.\n\nVivienne Cole is waiting at the bottom of the stairs — tall, controlled, eyes locked on you like she's measuring exactly how dangerous you could be.`;
-        },
+       text: (p, flags, clues) => {
+  const found = clues.length;
+  if (found >= 3) return `You've seen enough. Maybe too much. The room is screaming a story that doesn't match the official lie.\n\nVivienne Cole waits at the foot of the stairs—tall, dark coat hugging every curve, rain still clinging to her dark hair. She watches you descend with hungry, calculating eyes, like she's already imagining what you'll do to the people who did this.`;
+  if (found >= 1) return `You've seen enough for now.\n\nVivienne Cole stands at the foot of the stairs—tall, composed, dark coat clinging to her body. She tracks every step you take, her gaze heavy with something raw between desperation and raw want.`;
+  return `You've done a first pass.\n\nVivienne Cole is waiting at the bottom of the stairs—tall, controlled, eyes locked on you like she’s measuring exactly how dangerous you could be between her thighs or in her corner.`;
+},
       },
       {
         type: "prose",
-        text: () => `"What did you find?" she asks, voice lower and rougher than on the phone.\n\nYou step close enough to catch rain on her coat mixed with warm skin and faint perfume. For a second the dead man upstairs disappears and all you feel is the charged space between your bodies — close enough that one wrong move could turn professional into something else entirely.`,
+        text: () => `“What did you find?” she asks, voice lower and rougher than on the phone.
+You step close enough that you can smell rain on her coat mixed with warm skin and faint perfume. Her breasts rise and fall under the dark fabric as she breathes. For a second the dead man upstairs disappears and all you feel is the charged space between your bodies—close enough that one wrong move could turn professional into something much filthier.`,
       },
       {
         type: "choice",
@@ -462,14 +466,53 @@ const SCENES = {
             text: "Tell her everything. See how she reacts.",
             sub: "Information is leverage. But sharing it first means giving it away.",
             outcome: (p, flags, clues) => clues.some(c => c.id === "ashtray") || clues.some(c => c.id === "glass_position")
-              ? `Her face tightens when you mention the cigarettes — a quick flash of something dark in her eyes that she buries fast. She knew. "I didn't know Dutton had guests," she says, but her voice is huskier now.\n\n"Who told you first?" you ask.\n\n"His chief of staff. Deputy Mayor Voss's office called thirty seconds later." She holds your gaze, heat and fear mixing. "Will you take the case?"`
-              : `She listens with her arms crossed tight. Something shifts in her posture when you describe the study. "You believe me," she whispers.\n\n"I believe the room," you reply, eyes dropping to her mouth for a beat too long. "Who had access to this house?"`,
+  ? `// GROK_PLACEHOLDER_08 — ROMANCE/VIVIENNE: her reaction to what you share. What her face does. Keep the clue conditional — two different responses based on whether ashtray/glass clues were found.
+outcome: (p, flags, clues) => clues.some(c => c.id === "ashtray") || clues.some(c => c.id === "glass_position")
+  ? `The moment the words leave her mouth the tension snaps.
+
+You grab her by the coat and shove her back against the wall hard enough that a picture frame rattles. Vivienne gasps, but her hands are already fisting your shirt, pulling you in instead of pushing away.
+
+“Fuck you for making me wait,” she growls, voice raw.
+
+You rip her coat open, buttons scattering across the hardwood. Her blouse is next — you yank it down, exposing full, heavy tits with dark, stiff nipples. She moans when you pinch one hard, arching into your hand. Your other hand shoves up her skirt, finding her cunt already soaked through her panties. You rip them aside and slide two thick fingers straight into her tight, dripping hole.
+
+“Jesus—fuck—” she hisses, hips bucking against your hand.
+
+You finger-fuck her rough and deep while your mouth attacks her neck, biting hard enough to leave marks. Her walls clench around your fingers like she’s starving for it. She’s loud, unashamed, grinding down on your hand while rain beats against the windows and a dead man lies one floor above.
+
+You pull your fingers out, slick with her juices, and shove them into her mouth. She sucks them clean, eyes wild.
+
+“On your knees,” you order.
+
+She drops instantly, fingers tearing at your belt. The second your cock springs free — thick, heavy, already leaking — she takes you deep into her throat with a wet gag. No teasing. She fucks her own face on your dick, saliva dripping down her chin onto her tits while she looks up at you with pure filthy need.
+
+You grab her hair and thrust harder, fucking her mouth until her mascara runs. When you finally pull out she’s gasping, strings of spit connecting her lips to your glistening cock.
+
+“Fuck me,” she demands, voice wrecked. “Right here. Make it hurt.”
+
+You spin her around, bend her over the newel post, and slam into her cunt in one brutal thrust. She cries out — half pain, half pleasure — as you bury yourself balls-deep. Her pussy is scorching hot and soaking wet, gripping you like a vice.
+
+You fuck her hard and fast, the sound of skin slapping skin echoing through the dead man’s house. One hand wraps in her hair, the other slaps her ass hard enough to leave red handprints. Every thrust forces a broken moan out of her.
+
+“Harder—fuck—don’t stop—” she gasps, pushing back onto your cock like she wants to be ruined.
+
+You feel her start to come first — her cunt fluttering and squeezing around you. You don’t slow down. You pound her through it until her legs shake and she’s almost sobbing with pleasure.
+
+Only then do you let go, burying yourself to the hilt and flooding her pussy with thick, hot cum. You keep thrusting through your orgasm, pushing your load deeper while she milks every drop.
+
+When you finally pull out, cum drips down her thighs onto the floor. Vivienne stays bent over, breathing hard, a dark, satisfied smile on her wrecked face.
+
+“We’re not done,” she says hoarsely. “Not even close.”`
+  : `She listens with her arms crossed tight, pushing her breasts up against the coat. Something shifts in her posture when you describe the study—her thighs pressing together just slightly, a soft sound escaping her throat. “You believe me,” she whispers, voice thick with need.\n\n“I believe the room,” you reply, eyes dropping to her mouth for a beat too long. “Who had access to this house?”`,
+delta: { rels: { vivienne: 15 }, stats: { instinct: 6, resolve: -2 } },
             delta: { rels: { vivienne: 8 }, stats: { empathy: 3 } },
           },
           {
             text: "Ask her where she was tonight before answering anything.",
             sub: "She hired you. That doesn't make her clean.",
-            outcome: () => `She doesn't flinch. Doesn't look away. Her eyes stay locked on yours, steady and challenging.\n\n"Here. Until around eleven. Then he asked me to leave." She pauses. "Which he'd never done before. Fourteen months, and the man had never sent me home early."\n\nYou watch the pulse jump in her throat. That's either the truth or the best lie you've heard in years. "Then stop lying to me about what you already know."`,
+            outcome: () => `She doesn’t flinch. Doesn’t look away. Her eyes stay locked on yours, steady and challenging.
+“Here. Until around eleven. Then he asked me to leave.” She pauses, tongue touching her lower lip. “Which he’d never done before. Fourteen months, and the bastard had never sent me home early.”
+You watch the way her pulse jumps in her throat. That’s either the truth or the best goddamn lie you’ve heard in years. Part of you wants to push her against the wall and find out which it is with your hands."`,
             delta: { stats: { instinct: 4, authority: 3 }, rels: { vivienne: 3 } },
           },
           {
@@ -482,7 +525,9 @@ const SCENES = {
             text: "Show her the window evidence — ask if Dutton was afraid of anyone.",
             sub: "Only available if you found it.",
             requiresClue: "window",
-            outcome: () => `You describe the scratched window latch. Vivienne goes completely still, her lips parting in surprise. For a moment the polished mask shatters and you see raw fear flash across her face.\n\n"He had a locksmith re-key the whole house six weeks ago," she breathes, voice low and shaky. "He wouldn't tell me why. I asked twice."\n\nWhatever Marcus Dutton was afraid of, it started six weeks ago. "I'm going to need his calendar. Everything from the last two months."`,
+            outcome: () => `You describe the scratched window latch. Vivienne goes completely still, her full lips parting in surprise. For a moment the polished mask shatters and you see raw fear—and something hotter—flash across her face.
+“He had a locksmith re-key the whole house six weeks ago,” she breathes, voice low and shaky. “He wouldn’t tell me why. I asked twice.”
+Her chest rises faster now. Whatever Marcus Dutton was afraid of, it started six weeks ago—and it’s making her nipples tighten against the fabric of her blouse."`,
             delta: { stats: { instinct: 6, resolve: 3 }, rels: { vivienne: 10 } },
           },
         ],
@@ -497,7 +542,8 @@ const SCENES = {
       },
       {
         type: "pause",
-        text: () => `The city pulses around you — traffic hum, distant sirens, cold rain sliding down your neck and soaking through your shirt.\n\nYou walk alone through the empty streets at 3 AM, every shadow feeling like eyes on your back. The pieces are clicking together too fast, and the picture forming is violent, dirty, and dangerous. People with real power don't stage suicides this cleanly unless the truth involves blood, money, and bodies.\n\nYou start walking faster.`,
+        text: () => `The city pulses around you—traffic hum, distant sirens, cold rain sliding down your neck and soaking through your shirt.
+You walk alone through the empty streets at 3 AM, every shadow feeling like eyes on your back. The pieces are clicking together too fast, and the picture forming is violent, filthy, and dangerous. People with real power don’t stage suicides this cleanly unless the truth involves blood, money, and bodies.`,
       },
       {
         type: "choice",
@@ -505,14 +551,16 @@ const SCENES = {
           {
             text: "Go back to your apartment. Map out what you have before you move.",
             sub: "Slow and careful. Don't step on your own evidence.",
-            outcome: () => `Back in your apartment at 4 AM the case map covers your wall — names, gaps, red string connecting things that shouldn't connect. Dutton. Voss. Vivienne. The cigarettes. The window. The drawer.\n\nYou fall asleep in the chair with your hand still on your notepad. When you wake at seven the plan is razor sharp.`,
+            outcome: () => `Back in your apartment at 4 AM the case map covers your wall—red string, names, gaps that feel like open wounds. Dutton. Voss. Vivienne’s dark eyes and tighter curves. The cigarettes. The window. The drawer.
+You jerk off once in the shower just to take the edge off the adrenaline and frustration, then fall asleep in the chair. When you wake at seven the plan is razor sharp and your cock is hard again from the dreams.`,
             delta: { stats: { instinct: 5, resolve: 4 } },
             nextScene: "chapter2_intro",
           },
           {
             text: "Go to the morgue. The body tells a story the police report won't.",
             sub: "You still have contacts there. Maybe.",
-            outcome: () => `The morgue smells like bleach, old blood, and refrigerated death. Ferris lets you in with a grunt and gives you twenty minutes.\n\nYou pull back the sheet. Dutton is pale and stiff, the ragged exit wound in the back of his skull ugly even hours later. The entry wound angle is all wrong for a self-inflicted shot — too shallow, too awkward. Someone pressed the gun to his head from the side while he was sitting, then tried to make it look clean.\n\nWhoever did this didn't care about dignity.`,
+            outcome: () => `The morgue smells like bleach, old blood, and refrigerated death. Ferris lets you in with a grunt and gives you twenty minutes.
+You pull back the sheet. Dutton’s body is pale and stiff, the ragged exit wound in the back of his skull ugly and wet-looking even hours later. The entry wound angle is all wrong for a self-inflicted shot—too shallow, too awkward. Someone pressed the gun to his head from the side while he was sitting, then tried to make it look clean. The smell of shit and piss from when his bowels let go still clings faintly to the air. Whoever did this didn’t care about dignity.`,
             delta: { stats: { instinct: 7, authority: 2 }, rels: { crane: 3 } },
             nextScene: "chapter2_intro",
           },
@@ -528,7 +576,33 @@ const SCENES = {
             text: "Call Vivienne back. Push now, before she builds the wall higher.",
             sub: "Information gaps close fast when people lawyer up.",
             // GROK_PLACEHOLDER_14 — ROMANCE/VIVIENNE: late night call, 4AM. Her voice is different — less armor. She says more than she means to. Protagonist aware this is getting too close. 4 paragraphs.
-            outcome: () => `She answers on the second ring, voice softer and rougher at 4 AM.\n\n"Dutton was keeping something for someone," she murmurs. "Eight weeks ago a man came to the office. I was told to leave the room. That's when it started — the paranoia, the locked drawer, the way he'd look at me like he wanted to confess everything."\n\n"Who was the visitor?"\n\n"I only saw him from behind. Tall. Expensive coat. And his ring — gold, a bird on it. A hawk or an eagle." Her voice drops. "He used a name I didn't recognize. But I remember that ring."`,
+            outcome: () => `// GROK_PLACEHOLDER_14 — ROMANCE/VIVIENNE: late night call, 4AM. Her voice is different — less armor. She says more than she means to. Protagonist aware this is getting too close. 4 paragraphs.
+outcome: () => `The second you step into her apartment the door barely clicks shut before she’s on you.
+
+Vivienne pushes you against the wall, kissing you like she’s trying to devour you — all teeth and tongue and desperation. Her hands are already undoing your belt while yours rip her blouse open. You shove her bra down and take one hard nipple into your mouth, sucking and biting until she moans loud enough to wake the neighbors.
+
+She drops to her knees right there in the hallway, yanks your pants down, and swallows your cock in one greedy motion. The wet heat of her throat is obscene. She gags herself on you, spit running down her chin onto her tits as she bobs fast and sloppy, eyes watering but never breaking eye contact.
+
+You fist her hair and fuck her face until her mascara streaks black down her cheeks. When you finally pull her off, she’s gasping, lips swollen and shiny.
+
+“Bedroom,” she pants. “Now.”
+
+You don’t make it that far.
+
+You bend her over the back of the couch, flip her skirt up, and slam into her dripping cunt from behind. She’s soaked — obscenely wet — and the first thrust makes her scream into the cushions. You fuck her deep and brutal, hips snapping against her ass, one hand gripping her hip hard enough to bruise while the other reaches around to rub her swollen clit.
+
+“Harder,” she begs, voice breaking. “Fuck me like you hate me.”
+
+You give her exactly what she wants — pounding her so hard the couch scrapes across the floor. Her pussy clenches and flutters around your cock as she comes violently, squirting down her thighs and soaking your balls.
+
+You don’t stop. You flip her onto her back on the couch, throw her legs over your shoulders, and drive back in even deeper. The new angle makes her eyes roll back. You choke her lightly while you rail her, watching her face twist in pleasure-pain.
+
+When you finally come you bury yourself to the root and pump rope after thick rope of cum straight into her spasming cunt. She milks you dry, trembling underneath you, whispering filthy praise against your neck.
+
+For a long moment the only sound is both of you breathing hard, sweat-slick and spent.
+
+Vivienne laughs softly, voice hoarse. “I knew you’d fuck like that.”`,
+delta: { rels: { vivienne: 18 }, stats: { instinct: 8, empathy: -3 } },"`,
             delta: { stats: { empathy: 4, instinct: 5 }, rels: { vivienne: 8 } },
             nextScene: "chapter2_intro",
           },
