@@ -731,13 +731,4 @@ export default function App() {
   if (phase === "game" && player) return <Game player={player} />;
   return null;
 }
-            text: "Ask Vivienne who else Dutton trusted. Someone gave him that list.",
-            sub: "No one builds a file like this alone.",
-            outcome: () => `She hesitates for a long moment, then leans in closer across the booth, her voice barely above a whisper. "There was someone he called late at night. He called them... Ghost." The word hangs heavy and intimate between you. "I never met them. I thought it was just a nickname."\n\nHer eyes stay locked on yours, something vulnerable and heated flickering there. You promise you'll find Ghost. She doesn't thank you with words — the slow, lingering look she gives you says far more.`,
-            delta: { stats: { empathy: 5, instinct: 6 }, rels: { vivienne: 8, ghost: 10 } },
-          },
-        ],
-      },
-    ],
-  },
-};
+         
