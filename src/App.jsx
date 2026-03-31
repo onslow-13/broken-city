@@ -694,7 +694,7 @@ const SCENES = {
             outcome: () => `The address leads to a nondescript brick building on Merchant Row. Something feels wrong the moment you arrive — too quiet, windows too dark. As you watch from across the street, the unmistakable prickle of being watched crawls up your spine. You turn, but the sidewalk is empty. The city is already closing in.`,
             delta: { stats: { instinct: 7, resolve: 5 }, rels: { ghost: 8 } },
           },
-          {
+          
 function Title({ onStart }) {
   return (
     <div style={{ minHeight: "100vh", background: "#0a0a0b", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24, position: "relative", overflow: "hidden" }}>
