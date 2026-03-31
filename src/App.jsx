@@ -695,6 +695,42 @@ const SCENES = {
             delta: { stats: { instinct: 7, resolve: 5 }, rels: { ghost: 8 } },
           },
           {
+function Title({ onStart }) {
+  return (
+    <div style={{ minHeight: "100vh", background: "#0a0a0b", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24, position: "relative", overflow: "hidden" }}>
+      <style>{G}</style>
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(ellipse at 30% 60%, rgba(184,134,11,.05) 0%, transparent 50%), radial-gradient(ellipse at 70% 40%, rgba(139,26,26,.05) 0%, transparent 50%)" }} />
+      <div style={{ animation: "fadeUp .9s ease", position: "relative", maxWidth: 480, textAlign: "center" }}>
+        <div style={{ fontSize: 7, letterSpacing: 7, color: AMBER, marginBottom: 20, fontFamily: "'IBM Plex Mono', monospace" }}>A NARRATIVE INVESTIGATION</div>
+        <h1 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: "clamp(72px,14vw,120px)", fontWeight: 700, letterSpacing: 6, color: "#d4cfc8", lineHeight: .85, marginBottom: 16 }}>
+          BROKEN<br /><span style={{ color: AMBER2 }}>CITY</span>
+        </h1>
+        <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${AMBER}, transparent)`, margin: "28px auto", width: 200, opacity: .3 }} />
+        <p style={{ color: "#2a2a2e", fontSize: 13, lineHeight: 1.9, marginBottom: 40, fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
+          A dead councilman. A city built on lies.<br />The truth is buried somewhere underneath.
+        </p>
+        <button onClick={onStart}
+          onMouseEnter={e => { e.currentTarget.style.background = AMBER; e.currentTarget.style.color = "#000"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = AMBER2; }}
+          style={{ padding: "15px 50px", background: "transparent", border: `1px solid ${AMBER}`, color: AMBER2, fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 5, fontSize: 14, cursor: "pointer", transition: "all .3s" }}>
+          OPEN THE CASE →
+        </button>
+        <div style={{ marginTop: 28, fontSize: 7, color: "#1a1a1c", letterSpacing: 3, fontFamily: "'IBM Plex Mono', monospace" }}>CHAPTER ONE — THE DUTTON HOUSE</div>
+      </div>
+    </div>
+  );
+}
+
+// ─── ROOT ─────────────────────────────────────────────────────────────────
+export default function App() {
+  const [phase, setPhase] = useState("title");
+  const [player, setPlayer] = useState(null);
+
+  if (phase === "title") return <Title onStart={() => setPhase("create")} />;
+  if (phase === "create") return <CharCreate onStart={p => { setPlayer(p); setPhase("game"); }} />;
+  if (phase === "game" && player) return <Game player={player} />;
+  return null;
+}
             text: "Ask Vivienne who else Dutton trusted. Someone gave him that list.",
             sub: "No one builds a file like this alone.",
             outcome: () => `She hesitates for a long moment, then leans in closer across the booth, her voice barely above a whisper. "There was someone he called late at night. He called them... Ghost." The word hangs heavy and intimate between you. "I never met them. I thought it was just a nickname."\n\nHer eyes stay locked on yours, something vulnerable and heated flickering there. You promise you'll find Ghost. She doesn't thank you with words — the slow, lingering look she gives you says far more.`,
