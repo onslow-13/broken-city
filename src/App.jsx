@@ -493,13 +493,10 @@ function Game({ player }) {
 }
 
 // ─── SCENES ───────────────────────────────────────────────────────────────
-// Each scene: array of beats. Types: prose, pause, examine, choice
-// prose: { type, text: fn(player, flags, clues, stats, rels) => string }
-// pause: same but halts until Continue pressed
-// examine: { type, prompt, items: [{label, hint, clue?, stat?}] }
-// choice: { type, choices: [{text, sub?, outcome?: fn, delta?, requiresClue?, nextScene?}] }
-
-const SCENES = {
+// GROK EXPANSION GUIDE:
+// Search for [GROK: ...] comments throughout this SCENES object.
+// Each one is a prose string (inside backticks) that you should expand IN PLACE.
+//const SCENES = {
   prologue_1: {
     beats: [
       {
@@ -508,7 +505,7 @@ const SCENES = {
       },
       {
         type: "prose",
-        text: (p) => `The call comes in at 2:17 AM.\n\nYou don't remember answering it. You remember the bourbon, and you remember the television's blue glow against the wall of your apartment, and then the phone is in your hand and a woman's voice is on the other end — clipped, controlled, the kind of controlled that means barely.`,
+        text: (p) => `The call comes in at 2:17 AM.\n\nThe bourbon sits heavy and warm in your gut while the television flickers its cold blue light across the cracked walls of your apartment. Sirens howl somewhere far below on the rain-slick streets, the endless metallic pulse of a city that never truly sleeps. Your eyes are half-closed in that hazy, half-drunk limbo when the phone starts ringing — sharp, insistent, slicing through the low drone like a switchblade.\n\nYou don't remember reaching for it, but it's already in your hand. On the other end is a woman's voice, clipped and tightly controlled, the kind of control that barely hides the fracture underneath.`,
       },
       {
         type: "prose",
@@ -516,23 +513,23 @@ const SCENES = {
       },
       {
         type: "prose",
-        text: (p) => `You say yes. You don't know why you say it like a question.\n\n"My name is Vivienne Cole. I work for Councilman Dutton. *Worked.* He's — " Another pause, longer this time. "He's dead. The police are saying suicide. I don't believe that. I need someone who doesn't work for the city."`,
+        text: (p) => `You say yes. You don't know why you say it like a question.\n\n"My name is Vivienne Cole. I work for Councilman Dutton. *Worked.*" The word lands like a spent shell casing — final and cold. There's a tremor beneath her composure, the kind that comes when someone is barely holding themselves together. "He's — " Another long pause, thick with everything she's not saying. "He's dead. The police are saying suicide. I don't believe that. I need someone who doesn't work for the city."\n\nThe name hits harder than it should. A supposedly clean politician in a filthy town, now just another corpse. This woman on the line is already measuring you, weighing whether you're the one who might drag the truth out of the dark — or get buried with it. You feel the last quiet moment slipping away and ask for the address anyway.`,
       },
       {
         type: "pause",
-        text: () => `An hour later, you're standing at the edge of Dutton's townhouse on Aldrich Street, the police tape still new enough to flutter in the October wind. Two uniforms linger by the cruiser. A detective you recognize — Ray Crane, six years on homicide — stands near the door with his arms crossed, watching you approach.`,
+        text: () => `An hour later, you're standing at the edge of Dutton's townhouse on Aldrich Street, October rain cutting sideways through the sodium streetlights. Yellow police tape snaps and flutters in the wind like a dying flag. The air reeks of wet asphalt, diesel, and the faint coppery tang that always clings to fresh death.\n\nDetective Ray Crane stands near the door, arms crossed, collar turned up against the downpour. Six years on homicide have carved hard lines into his weathered face. His eyes are hooded and exhausted — the kind of man who's seen too many bodies and made too many compromises.`,
       },
       {
         type: "prose",
-        text: () => `"Cole called you," Crane says. It isn't a question. He's got the specific exhaustion of someone who made peace with the bureaucracy a long time ago. "You know I can't let you inside."\n\n"I know."\n\n"Crime scene's sealed."\n\n"I know, Ray."`,
+        text: () => `"Cole called you," Crane says. It isn't a question. "You know I can't let you inside."\n\n"I know."\n\n"Crime scene's sealed."\n\n"I know, Ray."`,
       },
       {
         type: "prose",
-        text: () => `He looks at you for a long moment. Crane was two years ahead of you at the precinct, back before you both made very different choices. He's carrying something tonight — you can see it in the set of his jaw. He steps aside, just slightly. Just enough.\n\n"You didn't hear it from me. ME's calling it self-inflicted. Gunshot, study on the second floor. Nobody in the house." He stops. "Nobody *claims* to have been in the house."`,
+        text: () => `He stares at you through the rain for a long moment. Crane was two years ahead of you at the precinct before you both took different paths. Tonight he carries extra weight — you see it in the tight set of his jaw and the way his eyes keep flicking back to the house like it might bite.\n\nLetting you in costs him. He knows it. You both do. He steps aside anyway, just enough.\n\n"You didn't hear it from me. ME's calling it self-inflicted. Gunshot, study on the second floor. Nobody in the house." He stops. "Nobody *claims* to have been in the house."`,
       },
       {
         type: "pause",
-        text: () => `He lets you through.\n\nThe house smells like old money and cigarette smoke, which is strange because Dutton was a known anti-smoking crusader. Two terms on city council. Clean image. Scandal-free.`,
+        text: () => `He lets you through.\n\nThe house smells of old money and stale cigarette smoke, odd for a man who built his image on anti-tobacco crusades.\n\nUpstairs in the study, Councilman Dutton is slumped back in his leather chair like a broken puppet. The gunshot wound is a brutal, black-rimmed crater above his right temple. The exit wound has torn out the left side of his skull in a wet mess of bone fragments, brain matter, and dark blood that has spattered across the desk and up the wood-paneled wall. Thick blood pools glossy and congealing beneath the chair, one arm hanging limp with fingers curled in a final useless reach. The gun rests too neatly beside his left hand.\n\nThe staging is almost perfect — except the wound angle is wrong for suicide, and the blood spatter tells a much uglier story.`,
       },
       {
         type: "examine",
@@ -564,14 +561,14 @@ const SCENES = {
         type: "pause",
         text: (p, flags, clues) => {
           const found = clues.length;
-          if (found >= 3) return `You've seen enough. Maybe too much. The room is telling a story and it's not the one in Crane's report.\n\nYou step back into the hall. Vivienne Cole is waiting at the foot of the stairs — tall, composed, dark coat, the kind of woman who controls a room by simply existing in it. She's watching you the way people watch someone who might be the only thing standing between them and something worse.`;
-          if (found >= 1) return `You've seen enough for now. There's more here if you come back with the right questions.\n\nVivienne Cole is waiting at the foot of the stairs — tall, composed, dark coat. She watches you descend with something between hope and calculation.`;
-          return `You've done a first pass. Sometimes that's all you get.\n\nVivienne Cole is at the foot of the stairs when you come down — tall, controlled, watching you with the careful focus of someone who needs this to go right.`;
+          if (found >= 3) return `You've seen enough. Maybe too much. The room is telling a story the official report will never admit.\n\nYou step back into the hall. Vivienne Cole waits at the foot of the stairs — tall, composed, her dark coat still damp from the rain and clinging to every curve of her body. She watches you descend with magnetic intensity, her eyes dark and unreadable, controlled grief and something far more dangerous simmering just beneath the surface.`;
+          if (found >= 1) return `You've seen enough for now. There's more here if you come back with the right questions.\n\nVivienne Cole waits at the foot of the stairs — tall, composed, dark coat hugging her figure. She watches you with a mixture of fragile hope and cold calculation.`;
+          return `You've done a first pass. Sometimes that's all you get.\n\nVivienne Cole stands at the foot of the stairs when you come down — tall, controlled, her gaze locked on you with careful, hungry focus.`;
         },
       },
       {
         type: "prose",
-        text: () => `"What did you find?" she asks. Her voice is steadier than it was on the phone.\n\nYou look at her for a moment. You think about what Crane said. *Nobody claims to have been in the house.*`,
+        text: () => `"What did you find?" she asks. Her voice is steadier than on the phone, but standing this close you can see the faint rapid pulse at the base of her throat and the way her lips part just slightly as she waits for your answer.\n\nYou hold her gaze, the air between you thick with unspoken tension. Neither of you gives anything away, but the proximity feels charged — dangerous in ways that have nothing to do with the dead man upstairs.`,
       },
       {
         type: "choice",
@@ -580,43 +577,42 @@ const SCENES = {
             text: "Tell her everything. See how she reacts.",
             sub: "Information is leverage. But sharing it first means giving it away.",
             outcome: (p, flags, clues) => clues.some(c => c.id === "ashtray") || clues.some(c => c.id === "glass_position")
-              ? `Her face changes when you mention the cigarettes. Just barely — a tightening around the eyes. She recovers fast. "I didn't know Dutton had guests," she says. But she knew something. You file it away.\n\n"You said the police are calling it suicide," you say. "Who told you first?"\n\n"His chief of staff. Deputy Mayor Voss's office called thirty seconds later. Which tells you everything."  She meets your eyes. "Will you take the case?"`
-              : `She listens with her arms folded tight. Something in her expression shifts when you describe the study — a tension that was already there, pulled tighter.\n\n"You believe me," she says.\n\n"I believe the room," you tell her. "Will you tell me who had access to this house?"`,
+              ? `Her eyes tighten when you mention the cigarettes — a flash of recognition she kills almost instantly. Her full lips press into a thin line before she recovers. "I didn't know Dutton had guests," she says, but the lie sits heavy between you.\n\n"You said the police are calling it suicide," you reply. "Who told you first?"\n\n"His chief of staff. Deputy Mayor Voss's office called thirty seconds later." She leans in slightly, her voice dropping, the scent of her perfume cutting through the stale air. "Will you take the case?" Her eyes linger on yours a beat too long, dark and inviting.`
+              : `She listens with her arms folded tight, tension radiating from her body. When you describe the study her expression fractures for a split second, fear and something hotter flashing across her face.\n\n"You believe me," she breathes.\n\n"I believe the room," you tell her, stepping closer. "Will you tell me who had access to this house?"`,
             delta: { rels: { vivienne: 8 }, stats: { empathy: 3 } },
-            delta2: null,
           },
           {
             text: "Ask her where she was tonight before answering anything.",
             sub: "She hired you. That doesn't make her clean.",
-            outcome: () => `She doesn't flinch. "Here. Until around eleven. Then he asked me to leave." A pause. "Which he'd never done before. Fourteen months, and he'd never asked me to leave early."\n\nThat's either the truth or a very good lie. The only way to know is to keep pulling.\n\n"Okay," you say finally. "You want to know who killed him."\n\n"Yes."\n\n"Then stop lying to me about what you already know."`,
+            outcome: () => `She doesn't flinch. If anything, a spark of respect — maybe even dark amusement — flickers in her eyes. "Here. Until around eleven. Then he asked me to leave." She holds your gaze steadily. "Which he'd never done before. Fourteen months, and he'd never asked me to leave early."\n\nThe words hang between you. You watch her lips as she speaks, aware of how close you're standing, how easy it would be to close the distance. You almost wish you didn't have to test her this soon.\n\n"Okay," you say finally. "You want to know who killed him."\n\n"Yes."\n\n"Then stop lying to me about what you already know."`,
             delta: { stats: { instinct: 4, authority: 3 }, rels: { vivienne: 3 } },
           },
           {
             text: "Tell her the official story holds — for now — and you'll need payment upfront.",
             sub: "Keep your cards close. Professionals don't emote.",
-            outcome: () => `She reads you correctly — that this is a negotiation, not a confession. She opens her bag. An envelope. Thick.\n\n"There's more if you find out what happened." She sets it on the newel post. "I'm not stupid. I know how this looks. A dead politician, a woman who worked closely with him." She looks at you steadily. "I need someone in my corner who isn't already owned by this city."\n\nYou pick up the envelope.`,
+            outcome: () => `She reads you perfectly. Without a word she opens her bag and slides a thick envelope across the newel post. "There's more if you find out what happened." Her fingers brush yours as she withdraws her hand, deliberate and slow. "I'm not stupid. I know how this looks — a dead politician and the woman who worked closest to him." She meets your eyes, voice low and husky. "I need someone in my corner who isn't already owned by this city."\n\nYou pick up the envelope, the heat of her touch still lingering.`,
             delta: { stats: { authority: 5, instinct: 2 }, rels: { vivienne: 4 } },
           },
           {
             text: "Show her the window evidence — ask if Dutton was afraid of anyone.",
             sub: "Only usable if you found it.",
             requiresClue: "window",
-            outcome: () => `You describe the window latch. She goes very still.\n\n"He had a locksmith re-key the whole house six weeks ago," she says quietly. "He didn't tell me why. I asked twice."\n\nSix weeks. Whatever Dutton was afraid of, it started six weeks ago. You need to find out what changed.\n\n"I'm going to need access to his calendar. Everything from the last two months."`,
+            outcome: () => `You describe the scratched window latch. Vivienne goes very still, the color draining from her face. For a moment her perfect composure cracks and you see raw fear — and something that looks almost like desire to be understood.\n\n"He had a locksmith re-key the whole house six weeks ago," she whispers, stepping closer until you can feel the warmth of her breath. "He didn't tell me why. I asked twice."\n\nThe proximity is electric. You catch the faint tremble in her voice before she locks it down again.\n\n"I'm going to need access to his calendar. Everything from the last two months."`,
             delta: { stats: { instinct: 6, resolve: 3 }, rels: { vivienne: 10 } },
           },
         ],
       },
       {
         type: "pause",
-        text: () => `You're outside fifteen minutes later. The uniforms are gone. Crane's car is still there, engine running, exhaust curling into the cold air.\n\nHe rolls down the window when you approach.`,
+        text: () => `You're outside fifteen minutes later. The uniforms are gone. Crane's car is still there, engine running, exhaust curling into the cold rain.\n\nHe rolls down the window when you approach.`,
       },
       {
         type: "prose",
-        text: () => `"She's not telling you everything," he says.\n\n"Nobody ever does."\n\n"This one especially." He looks straight ahead. "Dutton was supposed to testify next month. City contracts investigation. The kind of testimony that puts people away." A beat. "People with money and patience."\n\nYou let that sit.\n\n"Who runs that investigation?" you ask.\n\nCrane just looks at you. "Deputy Mayor Voss." He rolls the window back up.`,
+        text: () => `"She's not telling you everything," he says.\n\n"Nobody ever does."\n\n"This one especially." He stares straight ahead. "Dutton was supposed to testify next month. City contracts investigation. The kind that puts powerful people away." A beat. "People with money and patience."\n\nYou let that sit.\n\n"Who runs that investigation?" you ask.\n\nCrane just looks at you. "Deputy Mayor Voss." He rolls the window back up.`,
       },
       {
         type: "pause",
-        text: () => `The city breathes around you — traffic hum, a distant train, rain beginning to find its way through the October dark. You've got a dead councilman, a woman who's scared and hiding something, a detective who just handed you a suspect without saying a word, and an empty desk drawer that used to hold something important.\n\nYou start walking.`,
+        text: () => `The city breathes around you at 3 AM — distant traffic, a far-off train, rain slicing through the October darkness and turning the streets into black mirrors. You've got a dead councilman with a wound that doesn't add up, a woman whose fear and allure are already under your skin, a detective who just handed you a suspect, and an empty drawer that used to hold something worth killing for.\n\nYou start walking, collar up, every shadow feeling like eyes on your back. The pieces are clicking together, and in this city that usually means someone ends up in a shallow grave.`,
       },
       {
         type: "choice",
@@ -624,14 +620,14 @@ const SCENES = {
           {
             text: "Go back to your apartment. Map out what you have before you move.",
             sub: "Slow and careful. Don't step on your own evidence.",
-            outcome: () => `The map comes together on your wall at 4 AM — a web of names and gaps. Dutton. Voss. Vivienne. The cigarettes. The window. The drawer. A timeline with a six-week hole in the middle.\n\nYou fall asleep in your chair and wake up at seven with a plan.`,
+            outcome: () => `At 4 AM the case map spreads across your wall under a single harsh lamp — names, red string, gaps that feel like open mouths. Dutton. Voss. Vivienne. The cigarettes. The window. The drawer. A six-week hole that feels like it's waiting to swallow you.\n\nOutside the city keeps grinding on. You fall asleep in the chair, exhausted and wired, waking at seven with a plan that already feels one step behind the darkness closing in.`,
             delta: { stats: { instinct: 5, resolve: 4 } },
             nextScene: "chapter2_intro",
           },
           {
             text: "Go to the morgue. The body tells a story the police report won't.",
             sub: "You still have contacts there. Maybe.",
-            outcome: () => `The night attendant, an old contact named Ferris, doesn't exactly welcome you. But he doesn't turn you away either. You get twenty minutes with the file. What you find in the ME's preliminary notes makes the drive home feel very long.\n\nThe entry wound trajectory is wrong for a self-inflicted shot. Not impossibly wrong. But wrong enough that someone decided not to mention it.`,
+            outcome: () => `The morgue reeks of industrial bleach barely covering the sweet-rot stench of death. Fluorescent lights buzz overhead as Ferris pulls back the sheet. Dutton lies pale and waxy, the left side of his skull a shattered ruin of torn flesh, bone splinters, and dried brain matter. The entry wound is a ugly black hole above the right temple.\n\nThe ME's notes are clinical, but the trajectory doesn't match a self-inflicted shot — too steep, wrong angle for the gun's position. Someone deliberately ignored it.\n\nYou stare at the ruined body under the cold lights, the metallic smell of blood still clinging to the air, and feel the case turning into something much uglier than you expected.`,
             delta: { stats: { instinct: 7, authority: 2 }, rels: { crane: 3 } },
             nextScene: "chapter2_intro",
           },
@@ -639,14 +635,14 @@ const SCENES = {
             text: "Find out who smokes Gauloises in this city.",
             sub: "Niche cigarettes are a fingerprint.",
             requiresClue: "ashtray",
-            outcome: () => `It takes you two hours of calling in favors to narrow it down. Gauloises aren't common — there are three import shops in the city that stock them. You get a name from the third one.\n\nValentine Morrow. Morrow works for Deputy Mayor Voss.\n\nThere's your first connection.`,
+            outcome: () => `Two hours of calling in favors later you have a name: Valentine Morrow. He works directly for Deputy Mayor Voss.\n\nThere's your first solid thread — and the first clear sign that this goes all the way up.`,
             delta: { stats: { instinct: 8, resolve: 3 }, rels: { ghost: 5 } },
             nextScene: "chapter2_intro",
           },
           {
             text: "Call Vivienne back. The thing she's not telling you — push now, before she builds the wall higher.",
             sub: "Information gaps close fast when people lawyer up.",
-            outcome: () => `She answers on the second ring. It's nearly 4 AM.\n\n"Dutton was keeping something for someone," she says, after a long silence. "I don't know what. About eight weeks ago someone came to the office. I was asked to leave the room. That's when it started — the late nights, the locked drawer, the paranoia."\n\n"Who was the visitor?"\n\nAnother silence. "I only saw him from behind. Tall. Expensive coat. He used a name I didn't recognize." She pauses. "But I remember his ring. Gold. A bird on it. A hawk or an eagle."`,
+            outcome: () => `She answers on the second ring, voice softer and huskier at nearly 4 AM, stripped of its daytime armor. "Dutton was keeping something for someone," she says after a long silence. "About eight weeks ago a visitor came to the office. I was told to leave the room. That's when the paranoia started."\n\n"Who was he?"\n\n"I only saw him from behind. Tall. Expensive coat. Gold ring with a bird on it — a hawk or eagle." Her voice drops even lower, intimate in the dark. "I shouldn't be telling you this... but I don't know who else I can trust right now."\n\nYou listen to her breathe on the line and feel how easily this is sliding from business into something far more dangerous — and how little you want to stop it.`,
             delta: { stats: { empathy: 4, instinct: 5 }, rels: { vivienne: 8 } },
             nextScene: "chapter2_intro",
           },
@@ -654,28 +650,27 @@ const SCENES = {
       },
     ],
   },
-
   chapter2_intro: {
     beats: [
       {
         type: "pause",
-        text: () => `*Chapter Two: What the City Buries*\n\nThree days later, Vivienne's meeting request comes through an unmarked email address.`,
+        text: () => `*Chapter Two: What the City Buries*\n\nThree days have passed in a haze of rain, paranoia, and dead ends. You've been watching your back, sleeping lightly, chasing ghosts through the city's underbelly. Then the unmarked email from Vivienne arrives.`,
       },
       {
         type: "prose",
-        text: () => `The diner on Corver Street is the kind of place that's been the same for forty years on purpose. Red vinyl, weak coffee, a counter that's seen everything. She's already in a booth when you arrive — coat still on, hands around a mug, watching the door the way you do when you're used to being followed.`,
+        text: () => `The diner on Corver Street hasn't changed in forty years — red vinyl, weak coffee, the smell of grease and old secrets. Vivienne is already there when you arrive, dark coat still on, hugging her curves, hands wrapped around a mug. Her eyes lock on you the moment you walk in, exhausted but sharp, the kind of look that makes the air feel heavier.\n\nShe looks like sin and survival wrapped in one dangerous package.`,
       },
       {
         type: "prose",
-        text: () => `"I found something," she says, before you've fully sat down. "In his second phone. The one I didn't tell the police about." She slides a folded piece of paper across the table. "He printed this out three nights before he died. I think it's what was in the drawer."`,
+        text: () => `"I found something," she says before you even sit. "In his second phone." She slides a folded paper across the table. "He printed this three nights before he died. I think it's what was missing from the drawer."`,
       },
       {
         type: "pause",
         text: (p, flags, clues) => {
           const hasDrawer = clues.some(c => c.id === "drawer");
           return hasDrawer
-            ? `The paper is a partial list — account numbers, transfers, the name of a shell company. *Herongate Holdings.* And at the bottom, circled in blue pen, a single name: *Marcus Voss.*\n\nYou fold it slowly. The empty drawer makes more sense now.`
-            : `The paper is a partial list — account numbers, transfers, the name of a shell company. *Herongate Holdings.* And at the bottom, circled in blue pen: *Marcus Voss.*\n\n"How many people know you have this?" you ask.\n\nShe looks at you. "You. And now you."`;
+            ? `The paper shows account numbers, transfers, *Herongate Holdings*, and at the bottom, circled hard in blue pen: *Marcus Voss.*\n\nYou fold it slowly. The empty drawer suddenly makes brutal sense. The silence between you feels loaded — this single sheet could get you both killed.`
+            : `The paper shows account numbers, transfers, *Herongate Holdings*, and at the bottom, circled in blue pen: *Marcus Voss.*\n\n"How many people know you have this?" you ask.\n\nShe looks straight into your eyes. "You. And now you."`;
         },
       },
       {
@@ -684,25 +679,25 @@ const SCENES = {
           {
             text: "This needs to go somewhere safe before it gets you both killed.",
             sub: "The document is everything. Protecting it is protecting her.",
-            outcome: () => `You spend the next hour making copies — three, in three different places. One with a lawyer you trust. One buried in a cloud account that doesn't exist under your name. One in a safety deposit box under a name that hasn't been you for a long time.\n\nVivienne watches you work with something that might be relief. It's hard to tell with her.\n\n"Now," you say. "Tell me what Dutton was afraid of. All of it."`,
+            outcome: () => `You spend the next hour making copies in three different locations, moving through rain-slick streets together. Your shoulders brush in narrow doorways. Vivienne watches you with dark, hungry eyes, gratitude mixing with something far more heated.\n\nWhen the last copy is secured she steps close, her body nearly pressing against yours. "Thank you," she murmurs, voice low and throaty. For a moment it looks like she's going to say more — or do more — but she holds back, the tension crackling between you like live wire.`,
             delta: { stats: { resolve: 6, authority: 4 }, rels: { vivienne: 6 } },
           },
           {
             text: "Take it straight to Crane. This is bigger than a PI case now.",
             sub: "You trust him. Mostly.",
-            outcome: () => `Crane meets you in a parking structure off Fifth. He reads the paper twice without saying anything.\n\n"This surfaces publicly, Voss will know within the hour," he says. "He's got people everywhere."\n\n"I know."\n\n"You're asking me to go sideways on my own department."\n\n"I'm asking if you care that a man is dead." A long pause. He folds the paper and puts it in his inside pocket.\n\n"Give me 48 hours."`,
+            outcome: () => `Crane meets you in a dimly lit parking structure, concrete pillars casting long shadows. He reads the document twice, face hardening. Fear flickers in his eyes — real fear.\n\n"This goes public, Voss will know in an hour," he mutters. "He's got eyes everywhere."\n\nThe paper sits between you like a loaded gun. Crane finally pockets it. "Give me 48 hours." His voice is tight. You both know how easily this could end with both of you face-down in the river.`,
             delta: { stats: { authority: 5, instinct: 3 }, rels: { crane: 12, voss: -5 } },
           },
           {
             text: "You need to get to Herongate Holdings before Voss realizes the document exists.",
             sub: "Follow the money. It goes somewhere physical.",
-            outcome: () => `The shell company traces to a registered agent on Merchant Row — the kind of address that appears on a dozen incorporation filings and means nothing on its own. But the registered agent's name appears twice in the documents. Once for Herongate. Once for a construction company that won $40 million in city contracts last cycle.\n\nYou're building the picture. It's an ugly one.`,
+            outcome: () => `The address leads to a nondescript brick building on Merchant Row. Something feels wrong the moment you arrive — too quiet, windows too dark. As you watch from across the street, the unmistakable prickle of being watched crawls up your spine. You turn, but the sidewalk is empty. The city is already closing in.`,
             delta: { stats: { instinct: 7, resolve: 5 }, rels: { ghost: 8 } },
           },
           {
             text: "Ask Vivienne who else Dutton trusted. Someone gave him that list.",
             sub: "No one builds a file like this alone.",
-            outcome: () => `She thinks for a long time. "There was someone he called sometimes, late. I never met them. He called them—" She stops.\n\n"What?"\n\n"Ghost. He actually said that once. *I need to call Ghost.*" She shakes her head slightly. "I thought it was a nickname. Maybe an old contact."\n\nAn old contact. A nickname. Someone who moves in the dark and knew what Dutton was sitting on.\n\nYou're going to need to find Ghost.`,
+            outcome: () => `She hesitates for a long moment, then leans in closer across the booth, her voice barely above a whisper. "There was someone he called late at night. He called them... Ghost." The word hangs heavy and intimate between you. "I never met them. I thought it was just a nickname."\n\nHer eyes stay locked on yours, something vulnerable and heated flickering there. You promise you'll find Ghost. She doesn't thank you with words — the slow, lingering look she gives you says far more.`,
             delta: { stats: { empathy: 5, instinct: 6 }, rels: { vivienne: 8, ghost: 10 } },
           },
         ],
@@ -710,48 +705,3 @@ const SCENES = {
     ],
   },
 };
-
-// ─── TITLE ────────────────────────────────────────────────────────────────
-function Title({ onStart }) {
-  return (
-    <div style={{ minHeight: "100vh", background: "#0a0a0b", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24, position: "relative", overflow: "hidden" }}>
-      <style>{G}</style>
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(ellipse at 30% 60%, rgba(184,134,11,.05) 0%, transparent 50%), radial-gradient(ellipse at 70% 40%, rgba(139,26,26,.05) 0%, transparent 50%)" }} />
-      {/* Rain effect */}
-      <div style={{ position: "absolute", inset: 0, overflow: "hidden", opacity: .04 }}>
-        {Array.from({ length: 30 }).map((_, i) => (
-          <div key={i} style={{ position: "absolute", left: `${Math.random() * 100}%`, top: 0, width: 1, height: `${20 + Math.random() * 60}px`, background: "#b8860b", animation: `fadeIn ${1 + Math.random() * 2}s ease ${Math.random() * 3}s infinite` }} />
-        ))}
-      </div>
-
-      <div style={{ animation: "fadeUp .9s ease", position: "relative", maxWidth: 480, textAlign: "center" }}>
-        <div style={{ fontSize: 7, letterSpacing: 7, color: AMBER, marginBottom: 20, fontFamily: "'IBM Plex Mono', monospace" }}>A NARRATIVE INVESTIGATION</div>
-        <h1 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: "clamp(72px,14vw,120px)", fontWeight: 700, letterSpacing: 6, color: "#d4cfc8", lineHeight: .85, marginBottom: 16 }}>
-          BROKEN<br /><span style={{ color: AMBER2 }}>CITY</span>
-        </h1>
-        <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${AMBER}, transparent)`, margin: "28px auto", width: 200, opacity: .3 }} />
-        <p style={{ color: "#2a2a2e", fontSize: 13, lineHeight: 1.9, marginBottom: 40, fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
-          A dead councilman. A city built on lies.<br />The truth is buried somewhere underneath.
-        </p>
-        <button onClick={onStart}
-          onMouseEnter={e => { e.currentTarget.style.background = AMBER; e.currentTarget.style.color = "#000"; }}
-          onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = AMBER2; }}
-          style={{ padding: "15px 50px", background: "transparent", border: `1px solid ${AMBER}`, color: AMBER2, fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 5, fontSize: 14, cursor: "pointer", transition: "all .3s" }}>
-          OPEN THE CASE →
-        </button>
-        <div style={{ marginTop: 28, fontSize: 7, color: "#1a1a1c", letterSpacing: 3, fontFamily: "'IBM Plex Mono', monospace" }}>CHAPTER ONE — THE DUTTON HOUSE</div>
-      </div>
-    </div>
-  );
-}
-
-// ─── ROOT ─────────────────────────────────────────────────────────────────
-export default function App() {
-  const [phase, setPhase] = useState("title");
-  const [player, setPlayer] = useState(null);
-
-  if (phase === "title") return <Title onStart={() => setPhase("create")} />;
-  if (phase === "create") return <CharCreate onStart={p => { setPlayer(p); setPhase("game"); }} />;
-  if (phase === "game" && player) return <Game player={player} />;
-  return null;
-}
